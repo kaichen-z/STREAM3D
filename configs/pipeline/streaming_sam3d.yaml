@@ -1,0 +1,42 @@
+stage1_inference_steps: 25
+stage2_inference_steps: 25
+decode_formats: [gaussian, mesh]
+mode: multidiffusion
+use_stage1_distillation: false
+use_stage2_distillation: false
+save_stage2_init: false
+save_stage2_init_path: null
+
+# Keep the default mesh path close to the paper/dev release: colored GLB without
+# mesh postprocess or texture baking. Enable postprocess explicitly for cleanup.
+with_mesh_postprocess: false
+with_texture_baking: false
+use_vertex_color: true
+
+ss_weighting: true
+ss_attention_layer: 9
+ss_weight_source: mass_relative
+ss_jam_alpha: 1.0
+ss_jam_kappa: 8.0
+ss_uniform_blend: 0.0
+ss_min_weight: 0.001
+ss_warmup_steps: 1
+ss_patch_start: 5
+ss_patch_end: 1374
+
+# Weighting configuration
+stage2_weighting:
+  enabled: true
+  # [] disables Stage-2 weighting and uses the original multi-diffusion path.
+  weight_source: mass_relative  # joint_attention_mass | entropy | mass_relative
+  use_patch_mass: false
+  jam_alpha: 1.0
+  jam_kappa: 8.0
+  uniform_blend: 0.0
+  patch_mass_gamma: 1.0
+  final_temperature: 1.0
+  min_weight: 0.01
+  attention_layer: 6
+  attention_step: 0
+  patch_start: 5
+  patch_end: 1374

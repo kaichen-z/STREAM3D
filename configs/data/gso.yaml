@@ -1,0 +1,10 @@
+name: gso
+roots:
+  - data/Streaming3D/GSO30/alarm
+render_split: render_spiral_100
+image_dir_name: images
+mask_dir_name: masks
+da3_dir_name: da3
+chunk_size: 8
+chunk_overlap: 2
+chunk_indices: [-1]

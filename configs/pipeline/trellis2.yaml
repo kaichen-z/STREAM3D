@@ -1,0 +1,44 @@
+model_path: microsoft/TRELLIS.2-4B
+pipeline_type: null
+device: cuda
+attn_backend: null
+mode: multidiffusion
+preprocess_image: false
+max_num_tokens: 49152
+save_native_state: true
+
+selection:
+  topk: 8
+  # Task-43: distance-aware VA selection is the default. "va_div" = token-vote evidence re-ranked with
+  # frame-distance MMR (de-clusters redundant viewpoints at long horizons). Set method=token_vote (or
+  # selection_div_lambda=0.0) to recover the previous plain top-k vote default.
+  method: va_div
+  selection_div_lambda: 0.1
+  warmup_steps: 1
+  q_chunk_size: 128
+  attention_layer: 6
+  # k=8 for the view selection too (matches fusion.jam_kappa=8 weighting).
+  jam_kappa: 8.0
+  memory_depth: 5
+  update_margin: 0.0
+
+fusion:
+  weight_source: mass_relative
+  q_chunk_size: 128
+  patch_start: 5
+  patch_end: 1374
+  jam_alpha: 1.0
+  jam_kappa: 8.0
+  min_weight: 0.01
+  sparse_structure:
+    attention_layer: 6
+  shape_slat:
+    attention_layer: 3
+  tex_slat:
+    attention_layer: 3
+
+export:
+  decimation_target: 1000000
+  texture_size: 4096
+  prefer_ovoxel: true
+

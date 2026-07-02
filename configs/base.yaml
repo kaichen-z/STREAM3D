@@ -1,0 +1,27 @@
+# Base Hydra config for `python -m streaming.runner`
+
+defaults:
+  - data: gso
+  - backend: sam3d
+  - _self_
+
+model_config_path: checkpoints/hf/pipeline.yaml
+
+seed: 42
+shared_chunk_rng_stream: false
+
+output_root: outputs/gso_streaming_sam3d
+
+camera_pose_source: da3
+dataset_camera_path: null
+
+# Compatibility aliases for the original SAM3D command style.
+# Prefer data.chunk_size/data.chunk_overlap/data.chunk_indices in new docs.
+chunk_size: 8
+chunk_overlap: 2
+chunk_indices: [-1]
+
+hydra:
+  job:
+    chdir: false
+  output_subdir: .hydra

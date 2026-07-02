@@ -1,0 +1,33 @@
+selection_mode: token_vote
+metric: mass_relative
+attention_layer: 9
+warmup_steps: 1
+topk: 8
+memory_depth: 5
+token_vote_update_margin: 0.0
+# k=8 used for the view SELECTION too (stage-1 token-vote), matching the validated
+# streaming3d-us "k=8 for both selection and weighting" setting.
+jam_kappa: 8.0
+patch_start: 5
+patch_end: 1374
+# Task-43: default view-SELECTION aggregation. "va_div" = distance-aware VA selection (greedy
+# frame-distance MMR over the VA vote mass) — the best-performing Task-42 policy; resolves the
+# long-horizon view-clustering issue while preserving VA selection's mid-horizon advantage.
+# selection_div_lambda=0.1 is the Task-42 optimum (lambda=0 reduces exactly to plain "vote").
+# Set selection_strategy=vote (or selection_div_lambda=0.0) to recover the previous default.
+selection_strategy: va_div
+selection_div_lambda: 0.1
+
+stage2_selection:
+  enabled: true
+  metric: mass_relative
+  topk: 8
+  attention_layer: 6
+  attention_step: 0
+  # k=8 for the stage-2 view selection too (was 1.0).
+  jam_kappa: 8.0
+  # Number of seen-frame candidates scored together during Stage2 warmup; affects memory/runtime only.
+  candidate_batch_size: 8
+  final_stage2_weighting: true
+  patch_start: 5
+  patch_end: 1374

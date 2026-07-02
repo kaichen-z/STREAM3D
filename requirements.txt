@@ -1,0 +1,35 @@
+# Install PyTorch first with the CUDA wheel matching your machine.
+# Example for CUDA 12.1:
+#   pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121
+
+astor==0.8.1
+easydict==1.13
+einops==0.8.0
+einops-exts==0.0.4
+hydra-core==1.3.2
+igraph==0.11.8
+lightning==2.3.3
+loguru==0.7.2
+matplotlib==3.10.0
+numpy==1.26.4
+omegaconf==2.3.0
+open3d==0.18.0
+opencv-python==4.9.0.80
+optree==0.14.1
+pillow==10.4.0
+pymeshfix==0.17.0
+pyvista==0.44.2
+PyYAML==6.0.2
+roma==1.5.1
+safetensors==0.5.3
+scikit-image==0.23.1
+scipy==1.14.1
+setuptools==75.8.0
+spconv-cu121==2.3.8
+timm==0.9.16
+tqdm==4.67.1
+trimesh==4.5.3
+xatlas==0.0.9
+xformers==0.0.28.post3
+
+MoGe @ git+https://github.com/microsoft/MoGe.git@a8c37341bc0325ca99b9d57981cc3bb2bd3e255b

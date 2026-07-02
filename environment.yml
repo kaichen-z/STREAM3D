@@ -1,0 +1,11 @@
+name: streaming3d
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - cuda-toolkit=12.1
+  - cmake
+  - ninja
+  - gcc_linux-64=12
+  - gxx_linux-64=12

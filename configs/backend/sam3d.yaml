@@ -1,0 +1,9 @@
+# @package _global_
+
+defaults:
+  - /pipeline: streaming_sam3d
+  - /streaming: view_condition_cache
+  - _self_
+
+backend:
+  name: sam3d

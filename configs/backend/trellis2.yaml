@@ -1,0 +1,8 @@
+# @package _global_
+
+defaults:
+  - /pipeline: trellis2
+  - _self_
+
+backend:
+  name: trellis2

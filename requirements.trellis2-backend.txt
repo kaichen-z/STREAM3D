@@ -1,0 +1,13 @@
+# Optional dependencies for `backend=trellis2`.
+# Install base dependencies first (`requirements.txt` and `requirements.inference.txt`),
+# then install this file when you use the TRELLIS.2 backend.
+
+transformers>=5.9.0
+huggingface-hub>=1.16.1
+kornia>=0.8.2
+zstandard>=0.23.0
+
+# `o_voxel` can be built from the vendored TRELLIS.2 o-voxel directory if needed.
+# When unavailable, Streaming3D falls back to vertex-color GLB export.
+# `socksio` is required only when using a SOCKS proxy for model downloads.
+# socksio>=1.0.0

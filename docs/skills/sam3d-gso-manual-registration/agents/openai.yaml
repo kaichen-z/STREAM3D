@@ -1,0 +1,29 @@
+name: sam3d-gso-manual-registration
+description: Agent-in-the-loop reviewer for Streaming SAM3D GSO direct-mesh Sim3 alignment states.
+entrypoint: docs/skills/sam3d-gso-manual-registration/scripts/manual_register_sam3d_gso.py
+adjustment_controller: docs/skills/sam3d-gso-manual-registration/scripts/sim3_adjustment_controller.py
+state_file: alignment_state.json
+workflow:
+  - Run estimate once to create auto_initial_sim3 and active_sim3.
+  - Inspect comparison pairs one image at a time; start with 000, 012, and 024.
+  - Use comparison_contact_sheet.png only as a human index for choosing individual pairs.
+  - Use sim3_adjustment_controller.py to propose orientation or micro candidates instead of manually editing 4x4 matrices.
+  - For initial_gicp_scale or legacy initial24_gicp_scale states, export and render saved registration candidates before proposing new manual deltas.
+  - Render candidate triples for 000, 012, and 024, then apply only a visually selected candidate to active_sim3.
+  - Run canonical render after each applied candidate.
+  - For rejected batches, assign subagents disjoint scene scratch directories and require iterative visual correction, not one-shot labeling.
+  - Keep at most 5 subagents active concurrently across all variants.
+  - Require manual_adjustment_notes.md with inspected individual comparison paths and final accepted/improved_not_accepted/not_solved status.
+  - Keep auto_initial_sim3 immutable as provenance.
+rules:
+  - Do not import scripts from other docs/skills directories.
+  - Do not use result_pose.npz for registration.
+  - Do not overwrite result.ply or result.glb.
+  - Do not send a 25-view collage to a vision model for alignment judgment.
+  - Prefer three individual comparison images for the first visual diagnosis pass.
+  - Do not treat successful rendering or better metrics as visual acceptance.
+  - Prefer saved initial candidates over blind micro-adjustment when the state contains registration_diagnostics.candidates.
+  - Do not directly edit raw 4x4 Sim3 matrices unless the controller cannot express the candidate and the exception is documented.
+  - Write exploratory outputs under scratch.
+resources:
+  subagent_worker_prompt: references/subagent_worker_prompt.md
