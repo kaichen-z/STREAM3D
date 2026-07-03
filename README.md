@@ -37,6 +37,27 @@ Place a SAM3D-compatible pipeline config at `checkpoints/hf/pipeline.yaml` (or p
 `model_config_path=...`). The TRELLIS.2 backend loads `microsoft/TRELLIS.2-4B`. Each scene root
 should contain a render split with `images/`, `masks/`, and (for SAM3D) `da3/` pose outputs.
 
+## Data
+
+The evaluation set is **GSO30** — 30 objects from Google Scanned Objects — used for both
+reconstruction (scene names like `alarm`) and evaluation (`render_mvs_25` ground truth). Download it
+from:
+
+- **GSO30:** http://huggingface.co/datasets/WalkerCH/Streaming3D/tree/main/GSO30
+
+```bash
+# e.g. with the HuggingFace CLI
+huggingface-cli download WalkerCH/Streaming3D --repo-type dataset \
+  --include "GSO30/*" --local-dir ./data
+```
+
+Point the `GSO` environment variable (used by the run and eval scripts as the data / GT root) at the
+downloaded `GSO30` folder:
+
+```bash
+export GSO=./data/GSO30
+```
+
 ## Usage
 
 All scripts share the same call signature:
