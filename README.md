@@ -70,6 +70,7 @@ bash <script>.sh <gpu> <objects_csv> <output_dir> [chunk_indices] [seed]
 |--------|----------|--------|
 | `running_sam3d.sh` | SAM3D | baseline (random views, uniform fusion) |
 | `running_stream3d.sh` | SAM3D | **Stream3D** (VA selection + VA weighting) |
+| `running_stream3d_fast.sh` | SAM3D | **Stream3D, fast inference** (same method, shortcut sampling) |
 | `running_trellis.sh` | TRELLIS.2 | baseline (random views, uniform fusion) |
 | `running_stream3d_trellis.sh` | TRELLIS.2 | **Stream3D** (VA selection + VA weighting) |
 
@@ -79,6 +80,22 @@ Run the full Stream3D method on GSO30 scene `alarm`, GPU 5, reconstructing chunk
 bash running_stream3d.sh 5 alarm /tmp/out_full "[0,4,8,12]" 0          # SAM3D backbone
 bash running_stream3d_trellis.sh 5 alarm /tmp/out_full_trellis "[0,4,8,12]" 0   # TRELLIS.2 backbone
 ```
+
+### Fast inference
+
+`running_stream3d_fast.sh` runs the identical Stream3D method (same selection, weighting,
+outputs) with shortcut sampling: the stage-1 sparse-structure generator uses the distilled
+shortcut model at 4 inference steps, and stage 2 runs plain 4-step sampling (defaults are
+25/25). Same call signature:
+
+```bash
+bash running_stream3d_fast.sh 5 alarm /tmp/out_fast "[0,4,8,12]" 0
+```
+
+End-to-end it is ~1.5× faster per chunk (≈85 s → ≈55 s steady-state on an idle H100) at a
+small quality cost (CD-L2 +0.003–0.005, PSNR −0.3–0.6 dB on GSO30); output formats and sizes
+are unchanged. Use it for previews and iteration; use `running_stream3d.sh` for final numbers.
+Step counts are overridable via `STAGE1_STEPS` / `STAGE2_STEPS` (default 4).
 
 Reconstructions are written to `<output_dir>/<scene>/chunk_*/` (`result.ply`, `result.glb`,
 `params.npz`). Useful env overrides: `GSO` (data root), `KAPPA` (weighting sharpness, default 8),
