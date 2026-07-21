@@ -22,6 +22,8 @@ def load_images_and_masks_for_chunk(
         image_array = np.asarray(image)
         if image.mode == "RGBA" and image_array.ndim == 3 and image_array.shape[2] >= 4:
             return image_array[..., 3] > 0
+        if image.mode == "P":
+            return image_array > 0
         if image.mode == "RGB":
             logger.warning(
                 f"Mask file {path} is RGB, not RGBA. Using all pixels as mask."
