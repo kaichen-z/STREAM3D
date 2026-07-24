@@ -17,25 +17,45 @@ def load_images_and_masks_for_chunk(
         image = Image.open(path)
         return np.asarray(image).astype(np.uint8)
 
-    def load_mask_from_rgba(path: Path) -> np.ndarray:
+    def mask_is_degenerate(mask: np.ndarray) -> bool:
+        # A mask claiming >99% of the frame is foreground is a data bug
+        # (e.g. GSO_extra ships all-white mode-L masks), not a silhouette.
+        return bool(mask.mean() > 0.99)
+
+    def load_mask_from_rgba(path: Path, image_array: np.ndarray) -> np.ndarray:
         image = Image.open(path)
-        image_array = np.asarray(image)
-        if image.mode == "RGBA" and image_array.ndim == 3 and image_array.shape[2] >= 4:
-            return image_array[..., 3] > 0
-        if image.mode == "P":
-            return image_array > 0
-        if image.mode == "RGB":
+        mask_array = np.asarray(image)
+        if image.mode == "RGBA" and mask_array.ndim == 3 and mask_array.shape[2] >= 4:
+            mask = mask_array[..., 3] > 0
+        elif image.mode in ("P", "L"):
+            mask = mask_array > 0
+        elif image.mode == "RGB":
             logger.warning(
                 f"Mask file {path} is RGB, not RGBA. Using all pixels as mask."
             )
-            return np.ones((image_array.shape[0], image_array.shape[1]), dtype=bool)
-        logger.warning(
-            f"Unexpected mask mode {image.mode} for {path}. Using all pixels as mask."
-        )
-        return np.ones((image_array.shape[0], image_array.shape[1]), dtype=bool)
+            mask = np.ones((mask_array.shape[0], mask_array.shape[1]), dtype=bool)
+        else:
+            logger.warning(
+                f"Unexpected mask mode {image.mode} for {path}. Using all pixels as mask."
+            )
+            mask = np.ones((mask_array.shape[0], mask_array.shape[1]), dtype=bool)
+        if (
+            mask_is_degenerate(mask)
+            and image_array.ndim == 3
+            and image_array.shape[2] >= 4
+        ):
+            logger.warning(
+                f"Mask file {path} covers the whole frame; deriving the silhouette "
+                "from the paired image alpha channel instead."
+            )
+            mask = image_array[..., 3] > 0
+        return mask
 
     images = [load_image(image_path) for image_path in image_paths]
-    masks = [load_mask_from_rgba(mask_root / f"{stem}.png") for stem in image_stems]
+    masks = [
+        load_mask_from_rgba(mask_root / f"{stem}.png", image)
+        for stem, image in zip(image_stems, images)
+    ]
     return images, masks
 
 
